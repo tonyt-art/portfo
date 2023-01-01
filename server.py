@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect
 from datetime import datetime
 import csv
+from message import tt_email
 
 app = Flask(__name__)
 # print(__name__)
@@ -35,13 +36,14 @@ def write_to_csv(data):
         csv_writer.writerow([tt_date,email,subject,message])
         # file = database.write(f'\n{str(data1)}')
 
-
 @app.route('/submit_form', methods=['POST', 'GET'])
 def submit_form():
     if request.method == 'POST':
         try:
             data = request.form.to_dict()
             write_to_csv(data)
+            tt_estr = 'Email: ' + data['email'] + '<br>' + 'Subject: ' + data['subject'] + '<br>' + 'Message: ' + data['message']
+            (tt_email(tt_estr))
             return redirect('/thankyou.html')
         except:
             return 'Did not save to database'
